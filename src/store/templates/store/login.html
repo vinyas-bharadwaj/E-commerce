@@ -16,23 +16,23 @@
 
     <div class="container">
         <div class="row">
-            <center>
-                <div class="col-8">
-                    <form method="POST" action="{% url 'login' %}">
-                        {% csrf_token %}
-                        <br><br><br>
-                        <div class="mb-3">
-                          <input type="text" class="form-control" name="username" placeholder="Enter Username">
-                        </div>
-                        <div class="mb-3">
-                          <input type="password" class="form-control" name="password" placeholder="Enter Password">
-                        </div>
-                        <br><br>
-                        <button type="submit" class="btn btn-secondary">Login</button>
-                    </form>
+  
+            <div class="col-md-6 offset-md-3">
+                <form method="POST" action="{% url 'login' %}">
+                    {% csrf_token %}
                     <br><br><br>
-                </div>
-            </center>
+                    <div class="mb-3">
+                        <input type="text" class="form-control" name="username" placeholder="Enter Username">
+                    </div>
+                    <div class="mb-3">
+                        <input type="password" class="form-control" name="password" placeholder="Enter Password">
+                    </div>
+                    <br><br>
+                    <center><button type="submit" class="btn btn-secondary">Login</button></center>
+                </form>
+                <br><br><br>
+            </div>
+
         </div>
     </div>
 

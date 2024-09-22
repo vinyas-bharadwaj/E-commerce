@@ -1,0 +1,41 @@
+{% extends "store/base.html" %}
+
+{% block title %} {{ product.name }} {% endblock title %}
+
+{% block content %}
+	<br><br><br>
+	
+	<center>
+		<div class="container">
+			<div class="row">        
+				<div class="card mb-3">
+					<div class="row g-0">
+					  	<div class="col-md-4">
+							<img src="{{ product.image.url }}" class="img-fluid rounded-start">
+					  	</div>
+					  	<div class="col-md-8">
+							<div class="card-body">
+						  		<h5 class="card-title">{{ product.name }}</h5>
+						  		<hr>
+						  		<p class="card-text">{{ product.description }}</p>
+								{% if product.is_sale %}
+
+									<strike>${{ product.price }}</strike> &nbsp; ${{ product.sale_price }}
+
+								{% else %}
+							
+									<p>${{ product.price }}</p>
+
+								{% endif %}
+							</div>
+					  	</div>
+					</div>
+				</div>
+			</div>
+			<br><br>
+			<a class="btn btn-secondary" href="{% url 'home' %}">Back</a>
+		</div>
+	</center>
+
+	<br><br><br><br><br>
+{% endblock content %}
