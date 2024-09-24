@@ -27,6 +27,22 @@
 									<p>${{ product.price }}</p>
 
 								{% endif %}
+								<br><br>
+								<div class="row justify-content-center align-items-center">
+									<div class="col-md-2">Quantity:</div>
+									<div class="col-md-2 ">
+										<select id="qty-cart" class="form-select">
+											<option value="1">1</option>
+											<option value="2">2</option>
+											<option value="3">3</option>
+											<option value="4">4</option>
+											<option value="5">5</option>
+										</select>
+									</div>
+								</div>
+								
+								<br><br>
+
 							</div>
 					  	</div>
 					</div>
@@ -34,8 +50,40 @@
 			</div>
 			<br><br>
 			<a class="btn btn-secondary" href="{% url 'home' %}">Back</a>
+			<button value="{{ product.id }}" id="add-cart" class="btn btn-secondary">Add To Cart</button>
 		</div>
 	</center>
 
 	<br><br><br><br><br>
+
+
+	<script>
+		// Check if button is pressed
+		// ajax sends data to the backend without refreshing the page
+		$(document).on('click', '#add-cart', function(e) {
+			e.preventDefault();
+			$.ajax({
+				type: 'POST',
+				url: "{% url 'cart-add' %}",
+				data: {
+					product_id: $('#add-cart').val(),
+					product_qty: $('#qty-cart option:selected').text() ,
+					csrfmiddlewaretoken: '{{ csrf_token }}',
+					action: 'post',
+				},
+				
+				success: function(json) {
+					//console.log(json)
+					document.getElementById('cart-quantity').textContent = json.quantity;
+				},
+
+				error: function(xhr, errmsg, err) {
+
+				}
+
+			});
+		})
+
+	</script>
+
 {% endblock content %}
