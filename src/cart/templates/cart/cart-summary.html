@@ -2,99 +2,154 @@
 {% load static %}
 
 
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="" />
-        <meta name="author" content="" />
-        {% block title %}
-            E-commerce
-        {% endblock title %}
-        <!-- Favicon-->
-    </head>
-    <body>
-        {% block content %}
-            <!-- Header-->
-            <header class="bg-dark py-5">
-                <div class="container px-4 px-lg-5 my-5">
-                    <div class="text-center text-white">
-                        <h1 class="display-4 fw-bolder">Shopping Cart</h1>
-                        <p class="lead fw-normal text-white-50 mb-0">View Your Cart</p>
-                    </div>
-                </div>
-            </header>
-            <br>
-            <div class=container>
-                {% if cart_products %}
-                    {% for product in cart_products %}
-                        <center>
-                            <div class="card mb-3">
-                                <div class="row g-0">
-                                    <div class="col-md-4">
-                                        <img src="{{ product.image.url }}" class="img-fluid rounded-start">
-                                    </div>
-                                    <div class="col-md-8">
-                                        <div class="card-body">
-                                            <h5 class="card-title">{{ product.name }}</h5>
-                                            <hr>
-                                            <p class="card-text">{{ product.description }}</p>
-                                            {% if product.is_sale %}
-        
-                                                <strike>${{ product.price }}</strike> &nbsp; ${{ product.sale_price }}
-                                                <br>
-        
-                                            {% else %}
-                                        
-                                                <p>${{ product.price }}</p>
+{% block title %}
+    E-commerce
+{% endblock title %}
+<!-- Favicon-->
 
-        
-                                            {% endif %}
+{% block content %}
+    <!-- Header-->
+    <header class="bg-dark py-5">
+        <div class="container px-4 px-lg-5 my-5">
+            <div class="text-center text-white">
+                <h1 class="display-4 fw-bolder">Shopping Cart</h1>
+                <p class="lead fw-normal text-white-50 mb-0">View Your Cart</p>
+            </div>
+        </div>
+    </header>
+    <br>
+    <div class=container>
+        {% if cart_products %}
+            {% for product in cart_products %}
+                <center>
+                    <div class="card mb-3">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                <img src="{{ product.image.url }}" class="img-fluid rounded-start">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ product.name }}</h5>
+                                    <hr>
+                                    <p class="card-text">{{ product.description }}</p>
+                                    {% if product.is_sale %}
 
-                                            <br>
-                                            <div class="row justify-content-center align-items-center">
-                                                <div class="col-md-2">Quantity:</div>
-                                                <div class="col-md-2 ">
-                                                    <select id="qty-cart" class="form-select">
-                                                        
-                                                        {% for key, val in quantities.items %}
-                                                            {% if key == product.id|slugify %}
-                                                                <option selected>{{ val }}</option>
-                                                            {% endif %}
-                                                        {% endfor %}
-                                                        
-                                                        <option value="1">1</option>
-                                                        <option value="2">2</option>
-                                                        <option value="3">3</option>
-                                                        <option value="4">4</option>
-                                                        <option value="5">5</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <br>
-                                            <a class="btn btn-secondary mb-2" href="{% url 'home' %}">Back</a>
+                                        <strike>${{ product.price }}</strike> &nbsp; ${{ product.sale_price }}
+                                        <br>
+
+                                    {% else %}
+                                
+                                        <p>${{ product.price }}</p>
+
+
+                                    {% endif %}
+
+                                    <br>
+                                    <div class="row justify-content-center align-items-center">
+                                        <div class="col-md-2">Quantity:</div>
+                                        <div class="col-md-2 ">
+                                            <select class="form-select form-select-sm" id="select{{product.id}}">
+                                                
+                                                {% for key, val in quantities.items %}
+                                                    {% if key == product.id|slugify %}
+                                                        <h1>{{ val }}</h1>
+                                                        <option selected>{{ val }}</option>
+                                                    {% endif %}
+                                                {% endfor %}
+                                                
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+
+                                            </select>
                                         </div>
                                     </div>
+                                    <br>
+                                    <a class="btn btn-secondary" href="{% url 'home' %}">Back</a>
+                                    &nbsp;
+                                    <button class="btn btn-secondary update-item" type="button" data-index="{{ product.id }}">
+                                        Update
+                                    </button>
+                                    &nbsp;
+                                    <button class="btn btn-danger delete-item" type="button" data-index="{{ product.id }}">
+                                        Remove
+                                    </button>
                                 </div>
                             </div>
-                        </center>
-                    
-                    {% endfor %}
-                    
-                {% else %}
-                    <br><br><br>
-                    <center>
-                        <h1>Looks like your cart is empty!</h1>
-                        <br><br>
-                        <a class="btn btn-secondary" href="{% url 'home' %}">Back</a>
-                    </center>
+                        </div>
+                    </div>
+                </center>
+            
+            {% endfor %}
+            
+        {% else %}
+            <br><br><br>
+            <center>
+                <h1>Looks like your cart is empty!</h1>
+                <br><br>
+                <a class="btn btn-secondary" href="{% url 'home' %}">Back</a>
+            </center>
 
-                {% endif %}
+        {% endif %}
 
-            </div>
-                    
-            <br><br><br><br><br><br><br><br><br><br><br>
-        {% endblock content %}
-    </body>
-</html>
+    </div>
+            
+    <br><br><br><br><br><br><br><br><br><br><br>
+
+    <script>
+
+        $(document).on('click', '.update-item', function(e){
+            e.preventDefault();
+            // grab the product id
+            var productid = $(this).data('index');
+        
+            $.ajax({
+            type: 'POST',
+            url: "{% url 'cart-update' %}",
+            data: {
+              product_id: $(this).data('index'),
+              product_qty: $('#select' + productid + ' option:selected').text(),
+              csrfmiddlewaretoken: '{{ csrf_token }}',
+              action: 'post',
+            },
+            success: function(json){
+                location.reload();
+            },
+        
+            error: function(xhr, errmsg, err){
+        
+            },
+        
+            });
+        })
+
+        $(document).on('click', '.delete-item', function(e) {
+            e.preventDefault();
+    
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'cart-delete' %}",
+                data: {
+                    product_id: $(this).data('index'),
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    action: 'post',
+                },
+                
+                success: function(json) {
+                    location.reload();
+                },
+    
+                error: function(xhr, errmsg, err) {
+    
+                },
+    
+            });
+        })
+    
+    </script>
+
+{% endblock content %}
+
+
