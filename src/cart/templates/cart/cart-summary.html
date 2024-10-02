@@ -93,6 +93,14 @@
             </center>
 
         {% endif %}
+        <br><br>
+        <hr>
+        <br><br>
+        <center>
+            <h1>
+                Cart Total: ${{ total }}
+            </h1>
+        </center>
 
     </div>
             
@@ -100,30 +108,42 @@
 
     <script>
 
-        $(document).on('click', '.update-item', function(e){
-            e.preventDefault();
-            // grab the product id
-            var productid = $(this).data('index');
+        document.addEventListener('click', function (e) {
+            if (e.target.classList.contains('update-item')) {
+                e.preventDefault();
         
-            $.ajax({
-            type: 'POST',
-            url: "{% url 'cart-update' %}",
-            data: {
-              product_id: $(this).data('index'),
-              product_qty: $('#select' + productid + ' option:selected').text(),
-              csrfmiddlewaretoken: '{{ csrf_token }}',
-              action: 'post',
-            },
-            success: function(json){
-                location.reload();
-            },
+                // Grab the product id
+                const productid = e.target.getAttribute('data-index');
+                const product_qty = document.querySelector('#select' + productid + ' option:checked').textContent;
         
-            error: function(xhr, errmsg, err){
+                // Prepare the data to send
+                const data = new URLSearchParams();
+                data.append('product_id', productid);
+                data.append('product_qty', product_qty);
+                data.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+                data.append('action', 'post');
         
-            },
+                // Send the POST request using Fetch API
+                fetch("{% url 'cart-update' %}", {
+                    method: 'POST',
+                    body: data,
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Reload the page on success
+                        location.reload();
+                    } else {
+                        return response.json().then(errData => {
+                            throw new Error('Error: ' + errData);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+        });
         
-            });
-        })
 
         $(document).on('click', '.delete-item', function(e) {
             e.preventDefault();

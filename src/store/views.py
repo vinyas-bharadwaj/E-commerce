@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth.models import User
 from .models import Product, Category
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
-from .forms import SignUpForm
+from .forms import SignUpForm, UpdateProfileForm, UpdatePasswordForm
 
 # Create your views here.
 
@@ -50,10 +51,53 @@ def register_user(request):
 			return redirect('login')
 		
 		else:
-			messages.success(request, ("Whoops! There was a problem Registering, please try again..."))
+			messages.success(request, 'There seems to be some problem, please try again')
 			return redirect('register')
 
 	return render(request, 'store/register.html', {'form': form})
+
+# Update user profile
+def update_profile(request):
+	if request.user.is_authenticated:
+		current_user = request.user
+		form = UpdateProfileForm(request.POST or None, instance=current_user)
+
+		if form.is_valid():
+			form.save()
+
+			login(request, current_user)
+			messages.success(request, 'Profile successfully updated')
+			return redirect('home')
+		
+		return render(request, 'store/update-user.html', {'form': form})
+
+	messages.success(request, 'Must be logged in to update profile')
+	return redirect('home')
+
+# Update user password
+def update_password(request):
+	if request.user.is_authenticated:
+		current_user = request.user
+
+		if request.method == 'POST':
+			form = UpdatePasswordForm(current_user, request.POST)
+
+			if form.is_valid():
+				form.save()
+				messages.success(request, 'Password updated successfully, please login again')
+				return redirect('login')
+			
+			else:
+				for err in list(form.errors.values()):
+					messages.error(request, err)
+				return redirect('update-password')
+		
+		else:
+			form = UpdatePasswordForm(current_user)
+			return render(request, 'store/update-password.html', {'form': form})
+		
+	messages.success(request, 'Must be logged in to reset password')
+	return redirect('home')
 	
 # Login page
 def login_user(request):

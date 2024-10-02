@@ -60,3 +60,26 @@ class Cart():
 	def get_quantity(self):
 		quantities = self.cart
 		return quantities
+	
+	def total(self):
+		# Get product IDs
+		product_ids = self.cart.keys()
+
+		# Lookup those IDs in our products model
+		products = Product.objects.filter(id__in=product_ids) 
+
+		# Get quantities
+		quantities = self.cart
+
+		res = 0
+		for key, val in quantities.items():
+			# Key is the ID of the product (string)
+			# Val is the quantity of the product (int)
+			for product in products:
+				if str(product.id) == key:
+					if product.is_sale:
+						res += product.sale_price * val
+					else:
+						res += product.price * val
+
+		return res
