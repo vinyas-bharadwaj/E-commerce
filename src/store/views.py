@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
-from .models import Product, Category
+from .models import Product, Category, Profile
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
-from .forms import SignUpForm, UpdateProfileForm, UpdatePasswordForm
+from django.urls import reverse
+from .forms import SignUpForm, UpdateProfileForm, UpdatePasswordForm, UpdateInfoForm
 
 # Create your views here.
 
@@ -37,6 +38,25 @@ def category_products(request, cat):
 	categories = Category.objects.all()
 	context = {'products': products, 'categories': categories, 'category': cat}
 	return render(request, 'store/category-products.html', context=context)
+
+# Redirect to the search page
+def search_redirect(request):
+	search_query = request.GET.get('q')
+
+	if search_query:
+		return redirect(reverse('search', kwargs={'item': search_query}))
+	
+	return redirect('home')
+
+# Search for a product
+def search(request, item: str):
+	products = Product.objects.filter(name__icontains=item)
+
+	if not products:
+		messages.success(request, 'There seems to be no product with that name, please try again')
+		return render(request, 'store/search.html', {})
+	
+	return render(request, 'store/search.html', {'products': products})
 
 # Register page
 def register_user(request):
@@ -72,6 +92,23 @@ def update_profile(request):
 		return render(request, 'store/update-user.html', {'form': form})
 
 	messages.success(request, 'Must be logged in to update profile')
+	return redirect('home')
+
+# Update the user info
+def update_info(request):
+	if request.user.is_authenticated:
+		current_user = Profile.objects.get(user__id=request.user.id)
+		form = UpdateInfoForm(request.POST or None, instance=current_user)
+
+		if form.is_valid():
+			form.save()
+
+			messages.success(request, 'User info successfully updated')
+			return redirect('home')
+		
+		return render(request, 'store/update-info.html', {'form': form})
+
+	messages.success(request, 'Must be logged in to update user info')
 	return redirect('home')
 
 # Update user password

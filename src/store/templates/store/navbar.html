@@ -14,8 +14,16 @@
 
                 {% if user.is_authenticated %}
 
-                    <li class="nav-item"><a class="nav-link" href="{% url 'update-profile' %}">Profile</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Profile</a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="{% url 'update-profile' %}">User Profile</a></li>
+                            <li><hr class="dropdown-divider" /></li>
+                            <li><a class="dropdown-item" href="{% url 'update-info' %}">User Info</a></li>
+                        </ul>
+                    </li>
 
                 {% else %}
 
@@ -26,18 +34,25 @@
 
 
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Shop</a>
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Categories</a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="{% url 'home' %}">All Products</a></li>
                         {% for category in categories %}
-                            <li><a class="dropdown-item" href="{% url 'category-products' category.name|slugify %}">{{ category.name }}</a></li>
+                            <li><a class="dropdown-item" href="{% url 'category-products' category.name|slugify %}">{{ category.name|title }}</a></li>
                         {% endfor %}
                         <li><hr class="dropdown-divider" /></li>
-                        <li><a class="dropdown-item" href="#!">Popular Items</a></li>
-                        <li><a class="dropdown-item" href="#!">New Arrivals</a></li>
+                        <li><a class="dropdown-item" href="#!">Add Category</a></li>
                     </ul>
                 </li>
+
+                
+            
             </ul>
+            <form style="margin-right: 10px" class="d-flex" method='GET' action="{% url 'search-redirect' %}">
+                <input class="form-control me-2" type="text" placeholder="Search" name="q">
+                <button class="btn btn-outline-secondary" type="submit">Search</button>
+            </form>
+
             <form class="d-flex">
                 <a href="{% url 'cart-summary' %}" class="btn btn-outline-dark" type="submit">
                     <i class="bi-cart-fill me-1"></i>
@@ -48,3 +63,5 @@
         </div>
     </div>
 </nav>
+
+
