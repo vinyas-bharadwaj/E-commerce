@@ -4,7 +4,10 @@ from .models import Product, Category, Profile
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from django.urls import reverse
+from django.db.models import Q
 from .forms import SignUpForm, UpdateProfileForm, UpdatePasswordForm, UpdateInfoForm
+import json
+from cart.cart import Cart
 
 # Create your views here.
 
@@ -50,7 +53,8 @@ def search_redirect(request):
 
 # Search for a product
 def search(request, item: str):
-	products = Product.objects.filter(name__icontains=item)
+	# Q - essentially just allows us to have multiple conditions for the same query	
+	products = Product.objects.filter(Q(name__icontains=item) | Q(description__icontains=item))
 
 	if not products:
 		messages.success(request, 'There seems to be no product with that name, please try again')
@@ -145,6 +149,24 @@ def login_user(request):
 
 		if user is not None:
 			login(request, user)
+
+			# Check the shopping cart details
+			curr_user = Profile.objects.get(user__id=request.user.id)
+
+			# Get their saved cart from database
+			saved_cart = curr_user.old_cart
+
+			# Convert database string to python dictionary
+			if saved_cart:
+				# Convert to dictionary using json
+				converted_cart = json.loads(saved_cart)
+
+				# Add loaded cart dictionary to our current users session
+				cart = Cart(request)
+
+				for key, val in converted_cart.items():
+					cart.db_add(product=key, quantity=val)
+
 			messages.success(request, "Successfully logged in")
 			return redirect('home')
 		else:

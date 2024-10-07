@@ -12,6 +12,7 @@ class Profile(models.Model):
     country = models.CharField(max_length=100, blank=True)
     state = models.CharField(max_length=100, blank=True)
     city = models.CharField(max_length=100, blank=True)
+    old_cart = models.CharField(max_length=255, blank=True)
 
     def __str__(self) -> str:
         return self.user.username
