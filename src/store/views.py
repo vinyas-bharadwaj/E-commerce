@@ -1,5 +1,4 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.models import User
 from .models import Product, Category, Profile
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
@@ -8,6 +7,8 @@ from django.db.models import Q
 from .forms import SignUpForm, UpdateProfileForm, UpdatePasswordForm, UpdateInfoForm
 import json
 from cart.cart import Cart
+from payment.forms import ShippingForm
+from payment.models import ShippingAddress
 
 # Create your views here.
 
@@ -101,16 +102,26 @@ def update_profile(request):
 # Update the user info
 def update_info(request):
 	if request.user.is_authenticated:
+		# Get current user
 		current_user = Profile.objects.get(user__id=request.user.id)
+
+		# Get current user's shipping info
+		shipping_info = ShippingAddress.objects.get(user__id=request.user.id)
+
+		# User info form
 		form = UpdateInfoForm(request.POST or None, instance=current_user)
 
-		if form.is_valid():
+		# Shipping form
+		shipping_form = ShippingForm(request.POST or None, instance=shipping_info)
+
+		if form.is_valid() or shipping_form.is_valid():
 			form.save()
+			shipping_form.save()
 
 			messages.success(request, 'User info successfully updated')
 			return redirect('home')
 		
-		return render(request, 'store/update-info.html', {'form': form})
+		return render(request, 'store/update-info.html', {'form': form, 'shipping_form': shipping_form})
 
 	messages.success(request, 'Must be logged in to update user info')
 	return redirect('home')
