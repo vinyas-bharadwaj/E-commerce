@@ -67,7 +67,6 @@
                                         </div>
                                     </div>
                                     <br>
-                                    <a class="btn btn-secondary" href="{% url 'home' %}">Back</a>
                                     &nbsp;
                                     <button class="btn btn-secondary update-item" type="button" data-index="{{ product.id }}">
                                         Update
@@ -100,11 +99,14 @@
             <h1>
                 Cart Total: ${{ total }}
             </h1>
+            <br>
+            <a class="btn btn-primary" href="{% url 'checkout' %}">Checkout</a>
+            <a class="btn btn-secondary" href="{% url 'home' %}">Back</a>   
         </center>
 
     </div>
             
-    <br><br><br><br><br><br><br><br><br><br><br>
+    <br><br><br><br>
 
     <script>
 

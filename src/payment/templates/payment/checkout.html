@@ -1,0 +1,89 @@
+{% extends "store/base.html" %}
+{% load static %}
+
+
+{% block title %}
+    E-commerce
+{% endblock title %}
+<!-- Favicon-->
+
+{% block content %}
+    <!-- Header-->
+    <header class="bg-dark py-5">
+        <div class="container px-4 px-lg-5 my-5">
+            <div class="text-center text-white">
+                <h1 class="display-4 fw-bolder">Checkout</h1>
+                <p class="lead fw-normal text-white-50 mb-0">Review your order</p>
+            </div>
+        </div>
+    </header>
+    <br>
+
+    <div class="container">
+        {% for product in cart_products %}
+                <center>
+                    <div class="card mb-3">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                <img src="{{ product.image.url }}" class="img-fluid rounded-start">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ product.name }}</h5>
+                                    <hr>
+                                    <p class="card-text">{{ product.description }}</p>
+                                    {% if product.is_sale %}
+
+                                        <strike>${{ product.price }}</strike> &nbsp; ${{ product.sale_price }}
+                                        <br>
+
+                                    {% else %}
+                                
+                                        <p>${{ product.price }}</p>
+
+
+                                    {% endif %}
+
+                                    <br>
+                                    <div class="row justify-content-center align-items-center">
+                                        <div class="col-md-2">Quantity:</div>
+                                        <div class="col-md-2 ">
+                                            <select class="form-select form-select-sm" id="select{{product.id}}">
+                                                
+                                                {% for key, val in quantities.items %}
+                                                    {% if key == product.id|slugify %}
+                                                        <h1>{{ val }}</h1>
+                                                        <option selected>{{ val }}</option>
+                                                    {% endif %}
+                                                {% endfor %}
+                                                
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <br>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </center>
+            
+            {% endfor %}
+            <center>
+                <br><br>
+                <h1>
+                    Cart Total: ${{ total }}
+                </h1>
+                <br>
+                <a class="btn btn-outline-primary" href="{% url 'cart-summary' %}">Update Items</a>
+            </center>
+    </div>
+            
+    <br><br><br><br><br><br><br><br><br><br><br>
+
+{% endblock content %}
